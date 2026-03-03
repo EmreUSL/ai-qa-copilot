@@ -1,0 +1,4 @@
+Projenin amacı
+
+Test edilecek HTML içeriğini API üzerinden al -> analiz et -> AI'ya girdi ver -> Test Case üret
+
