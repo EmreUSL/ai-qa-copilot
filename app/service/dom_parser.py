@@ -6,21 +6,73 @@ class DomParser:
         self.soup = BeautifulSoup(html_text, "lxml")
 
     def extract_elements(self):
-        element = []
-        tags_to_extract = ["input", "button", "select", "textarea", "a", "form"]
+
+        elements = []
+
+        tags_to_extract = [
+            "input",
+            "button",
+            "select",
+            "textarea",
+            "a",
+            "form"
+        ]
 
         for tag_name in tags_to_extract:
+
             found = self.soup.find_all(tag_name)
 
             for el in found:
-                element.append({
+
+                text_value = el.get_text(strip=True)
+
+                element_data = {
                     "tag": tag_name,
                     "id": el.get("id"),
                     "name": el.get("name"),
+                    "type": el.get("type"),
                     "class": el.get("class"),
                     "placeholder": el.get("placeholder"),
                     "aria_label": el.get("aria-label"),
-                    "text": el.get_text(strip=True)
-                })
+                    "role": el.get("role"),
+                    "href": el.get("href"),
+                    "text": text_value,
+                    "selector": self._generate_selector(el)
+                }
 
-        return element
+                # boş elementleri filtrele
+                if not self._is_meaningful(element_data):
+                    continue
+
+                elements.append(element_data)
+
+        return elements
+
+    def _generate_selector(self, el):
+
+        if el.get("id"):
+            return f"#{el.get('id')}"
+
+        if el.get("name"):
+            return f"{el.name}[name='{el.get('name')}']"
+
+        if el.get("class"):
+            return f"{el.name}.{el.get('class')[0]}"
+
+        return el.name
+
+    def _is_meaningful(self, element):
+
+        if element["text"]:
+            return True
+
+        if element["placeholder"]:
+            return True
+
+        if element["name"]:
+            return True
+
+        if element["aria_label"]:
+            return True
+
+        return False
