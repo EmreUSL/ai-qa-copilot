@@ -23,6 +23,7 @@ class BrowserRenderer:
 
                 html = await page.content()
 
+
             except Exception as e:
                 raise Exception(f"Render error: {str(e)}")
 
@@ -30,3 +31,9 @@ class BrowserRenderer:
                 await browser.close()
 
             return html
+
+    async def get_accessibility_tree(self, page):
+
+        snapshot = await page.accessibility.snapshot()
+
+        return snapshot

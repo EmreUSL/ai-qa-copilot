@@ -1,5 +1,7 @@
 from bs4 import BeautifulSoup
 
+from app.model.element import Element
+
 
 class DomParser:
     def __init__(self, html_text: str):
@@ -31,20 +33,22 @@ class DomParser:
                     "id": el.get("id"),
                     "name": el.get("name"),
                     "type": el.get("type"),
-                    "class": el.get("class"),
+                    "class_name": el.get("class"),
                     "placeholder": el.get("placeholder"),
                     "aria_label": el.get("aria-label"),
                     "role": el.get("role"),
                     "href": el.get("href"),
+                    "data_testid": el.get("data-testid"),
                     "text": text_value,
+                    "value": el.get("value"),
                     "selector": self._generate_selector(el)
                 }
 
-                # boş elementleri filtrele
                 if not self._is_meaningful(element_data):
                     continue
 
-                elements.append(element_data)
+                element = Element(**element_data)
+                elements.append(element.model_dump())
 
         return elements
 
